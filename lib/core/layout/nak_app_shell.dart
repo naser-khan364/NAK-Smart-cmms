@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import '../../modules/dashboard/dashboard_page.dart';
 
 class NakAppShell extends StatefulWidget {
   const NakAppShell({super.key});
@@ -26,21 +27,31 @@ class _NakAppShellState extends State<NakAppShell> {
     Icons.settings_outlined,
   ];
 
+  Widget _buildPage() {
+    switch (_selectedIndex) {
+      case 0:
+        return const DashboardPage();
+
+      default:
+        return Center(
+          child: Text(
+            _titles[_selectedIndex],
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('NAK Smart | ${_titles[_selectedIndex]}'),
       ),
-      body: Center(
-        child: Text(
-          _titles[_selectedIndex],
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      body: _buildPage(),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) {
