@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'core/theme/nak_theme.dart';
 
 void main() {
   runApp(const NakSmartApp());
@@ -12,13 +13,7 @@ class NakSmartApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'NAK Smart',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.indigo,
-        ),
-        scaffoldBackgroundColor: const Color(0xFFF5F6FA),
-      ),
+      theme: NakTheme.light(),
       home: const NakHomePage(),
     );
   }
