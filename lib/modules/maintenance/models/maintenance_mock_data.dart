@@ -1,0 +1,48 @@
+﻿import 'maintenance_models.dart';
+
+final List<MaintenanceWorkOrder> maintenanceMockWorkOrders = [
+  MaintenanceWorkOrder(
+    id: 'WO-1001',
+    equipment: 'IGM2200-01',
+    title: 'بررسی خرابی و توقف خط تولید',
+    type: WorkOrderType.corrective,
+    status: WorkOrderStatus.inProgress,
+    priority: WorkOrderPriority.high,
+    requester: 'تولید',
+    assignedTo: 'تکنسین مکانیک',
+    createdAt: DateTime(2026, 7, 30),
+  ),
+  MaintenanceWorkOrder(
+    id: 'WO-1002',
+    equipment: 'CLABO-03',
+    title: 'بازدید دوره‌ای دستگاه',
+    type: WorkOrderType.preventive,
+    status: WorkOrderStatus.pending,
+    priority: WorkOrderPriority.medium,
+    requester: 'نت',
+    assignedTo: 'تکنسین مکانیک',
+    createdAt: DateTime(2026, 7, 29),
+  ),
+  MaintenanceWorkOrder(
+    id: 'WO-1003',
+    equipment: 'IGM2200-02',
+    title: 'رفع خرابی موتور',
+    type: WorkOrderType.corrective,
+    status: WorkOrderStatus.completed,
+    priority: WorkOrderPriority.critical,
+    requester: 'تولید',
+    assignedTo: 'تکنسین برق',
+    createdAt: DateTime(2026, 7, 28),
+  ),
+  MaintenanceWorkOrder(
+    id: 'WO-1004',
+    equipment: 'PUMP-07',
+    title: 'بازرسی و سرویس پمپ',
+    type: WorkOrderType.preventive,
+    status: WorkOrderStatus.pending,
+    priority: WorkOrderPriority.low,
+    requester: 'تأسیسات',
+    assignedTo: 'تکنسین تأسیسات',
+    createdAt: DateTime(2026, 7, 27),
+  ),
+];
