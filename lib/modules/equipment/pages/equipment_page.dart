@@ -4,12 +4,44 @@ import '../models/equipment_mock_data.dart';
 import '../models/equipment_models.dart';
 import 'equipment_passport_page.dart';
 
-class EquipmentPage extends StatelessWidget {
+class EquipmentPage extends StatefulWidget {
   const EquipmentPage({super.key});
 
   @override
+  State<EquipmentPage> createState() => _EquipmentPageState();
+}
+
+class _EquipmentPageState extends State<EquipmentPage> {
+  String search = '';
+  EquipmentStatus? statusFilter;
+
+  @override
   Widget build(BuildContext context) {
-    final equipment = equipmentMockData;
+    final filtered = equipmentMockData.where((e) {
+      final q = search.trim().toLowerCase();
+
+      final matchesSearch = q.isEmpty ||
+          e.code.toLowerCase().contains(q) ||
+          e.name.toLowerCase().contains(q) ||
+          e.location.toLowerCase().contains(q) ||
+          e.manufacturer.toLowerCase().contains(q);
+
+      final matchesStatus =
+          statusFilter == null || e.status == statusFilter;
+
+      return matchesSearch && matchesStatus;
+    }).toList();
+
+    final total = equipmentMockData.length;
+    final operational = equipmentMockData
+        .where((e) => e.status == EquipmentStatus.operational)
+        .length;
+    final maintenance = equipmentMockData
+        .where((e) => e.status == EquipmentStatus.maintenance)
+        .length;
+    final stopped = equipmentMockData
+        .where((e) => e.status == EquipmentStatus.stopped)
+        .length;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -33,31 +65,79 @@ class EquipmentPage extends StatelessWidget {
             children: [
               _SummaryCard(
                 title: 'کل تجهیزات',
-                value: '${equipment.length}',
+                value: '$total',
                 icon: Icons.precision_manufacturing_outlined,
               ),
               _SummaryCard(
                 title: 'در حال کار',
-                value:
-                    '${equipment.where((e) => e.status == EquipmentStatus.operational).length}',
+                value: '$operational',
                 icon: Icons.check_circle_outline,
               ),
               _SummaryCard(
                 title: 'در تعمیرات',
-                value:
-                    '${equipment.where((e) => e.status == EquipmentStatus.maintenance).length}',
+                value: '$maintenance',
                 icon: Icons.build_circle_outlined,
               ),
               _SummaryCard(
                 title: 'متوقف',
-                value:
-                    '${equipment.where((e) => e.status == EquipmentStatus.stopped).length}',
+                value: '$stopped',
                 icon: Icons.pause_circle_outline,
               ),
             ],
           ),
 
           const SizedBox(height: 24),
+
+          TextField(
+            decoration: InputDecoration(
+              labelText: 'جست‌وجوی تجهیز',
+              hintText: 'کد، نام، مکان یا سازنده',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: search.isEmpty
+                  ? null
+                  : IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () => setState(() => search = ''),
+                    ),
+              border: const OutlineInputBorder(),
+            ),
+            onChanged: (value) => setState(() => search = value),
+          ),
+
+          const SizedBox(height: 12),
+
+          Wrap(
+            spacing: 8,
+            children: [
+              FilterChip(
+                label: const Text('همه'),
+                selected: statusFilter == null,
+                onSelected: (_) => setState(() => statusFilter = null),
+              ),
+              FilterChip(
+                label: const Text('در حال کار'),
+                selected: statusFilter == EquipmentStatus.operational,
+                onSelected: (_) => setState(() => statusFilter = EquipmentStatus.operational,
+                ),
+              ),
+              FilterChip(
+                label: const Text('در تعمیرات'),
+                selected: statusFilter == EquipmentStatus.maintenance,
+                onSelected: (_) => setState(
+                  () => statusFilter = EquipmentStatus.maintenance,
+                ),
+              ),
+              FilterChip(
+                label: const Text('متوقف'),
+                selected: statusFilter == EquipmentStatus.stopped,
+                onSelected: (_) => setState(
+                  () => statusFilter = EquipmentStatus.stopped,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
 
           Card(
             child: Padding(
@@ -66,25 +146,33 @@ class EquipmentPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'فهرست تجهیزات',
+                    'فهرست تجهیزات (${filtered.length})',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 12),
 
-                  ...equipment.map(
-                    (item) => _EquipmentTile(
-                      equipment: item,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => EquipmentPassportPage(
-                              equipment: item,
+                  if (filtered.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Center(
+                        child: Text('تجهیزی با این مشخصات پیدا نشد.'),
+                      ),
+                    )
+                  else
+                    ...filtered.map(
+                      (item) => _EquipmentTile(
+                        equipment: item,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => EquipmentPassportPage(
+                                equipment: item,
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -138,7 +226,9 @@ class _SummaryCard extends StatelessWidget {
 
 class _EquipmentTile extends StatelessWidget {
   final Equipment equipment;
-  final VoidCallback onTap;const _EquipmentTile({
+  final VoidCallback onTap;
+
+  const _EquipmentTile({
     required this.equipment,
     required this.onTap,
   });
@@ -160,8 +250,7 @@ class _EquipmentTile extends StatelessWidget {
         ),
         subtitle: Text(
           '${equipment.type}\n'
-          '${equipment.location} | ${equipment.manufacturer} ${equipment.model}\n'
-          'MTBF: ${equipment.mtbf.toStringAsFixed(0)} h | '
+          '${equipment.location} | ${equipment.manufacturer} ${equipment.model}\n''MTBF: ${equipment.mtbf.toStringAsFixed(0)} h | '
           'MTTR: ${equipment.mttr.toStringAsFixed(0)} min',
         ),
         isThreeLine: true,

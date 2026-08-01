@@ -8,6 +8,10 @@ class Equipment {
   final String location;
   final String manufacturer;
   final String model;
+  final String serialNumber;
+  final String installationDate;
+  final String department;
+  final String description;
   final EquipmentStatus status;
   final double mtbf;
   final double mttr;
@@ -20,6 +24,10 @@ class Equipment {
     required this.location,
     required this.manufacturer,
     required this.model,
+    required this.serialNumber,
+    required this.installationDate,
+    required this.department,
+    required this.description,
     required this.status,
     required this.mtbf,
     required this.mttr,
