@@ -2,6 +2,7 @@
 
 import '../models/spare_part_models.dart';
 import '../models/spare_part_mock_data.dart';
+import 'spare_part_details_page.dart';
 
 class SparePartsPage extends StatelessWidget {
   const SparePartsPage({super.key});
@@ -10,12 +11,12 @@ class SparePartsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final parts = sparePartMockData;
 
-    final belowMinimum =
-        parts.where((part) => part.isBelowMinimum).toList();
+    final totalQuantity = parts.fold<double>(
+      0,
+      (sum, part) => sum + part.quantity,
+    );
 
-    final critical = parts
-        .where((part) => part.criticality == SparePartCriticality.critical)
-        .length;
+    final belowMinimum = parts.where((part) => part.isBelowMinimum).length;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -28,7 +29,7 @@ class SparePartsPage extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'مدیریت موجودی، حداقل موجودی و قطعات بحرانی',
+            'مدیریت قطعات، موجودی و حداقل موجودی موردنیاز تجهیزات',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 20),
@@ -38,54 +39,24 @@ class SparePartsPage extends StatelessWidget {
             runSpacing: 16,
             children: [
               _SummaryCard(
-                title: 'کل قطعات',
+                title: 'تعداد قطعات',
                 value: '${parts.length}',
                 icon: Icons.inventory_2_outlined,
               ),
               _SummaryCard(
-                title: 'زیر حداقل موجودی',
-                value: '${belowMinimum.length}',
-                icon: Icons.warning_amber_rounded,
-                color: Colors.red,
+                title: 'موجودی کل',
+                value: '$totalQuantity',
+                icon: Icons.warehouse_outlined,
               ),
               _SummaryCard(
-                title: 'قطعات بحرانی',
-                value: '$critical',
-                icon: Icons.priority_high_rounded,
-                color: Colors.deepOrange,
+                title: 'زیر حداقل موجودی',
+                value: '$belowMinimum',
+                icon: Icons.warning_amber_rounded,
               ),
             ],
           ),
 
           const SizedBox(height: 24),
-
-          if (belowMinimum.isNotEmpty)
-            Card(
-              color: Colors.red.withValues(alpha: 0.08),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.warning_amber_rounded,
-                      color: Colors.red,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        '${belowMinimum.length} قطعه '
-                        'نیاز به تأمین موجودی دارد.',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-          const SizedBox(height: 16),
 
           Card(
             child: Padding(
@@ -94,13 +65,24 @@ class SparePartsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'فهرست قطعات',
+                    'فهرست قطعات یدکی',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 12),
 
                   ...parts.map(
-                    (part) => _SparePartTile(part: part),
+                    (part) => _SparePartTile(
+                      part: part,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => SparePartDetailsPage(
+                              part: part,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -116,13 +98,11 @@ class _SummaryCard extends StatelessWidget {
   final String title;
   final String value;
   final IconData icon;
-  final Color? color;
 
   const _SummaryCard({
     required this.title,
     required this.value,
     required this.icon,
-    this.color,
   });
 
   @override
@@ -133,11 +113,8 @@ class _SummaryCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Row(
-            children: [Icon(
-                icon,
-                size: 34,
-                color: color,
-              ),
+            children: [
+              Icon(icon, size: 34),
               const SizedBox(width: 14),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,9 +123,7 @@ class _SummaryCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     value,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ],
               ),
@@ -162,24 +137,24 @@ class _SummaryCard extends StatelessWidget {
 
 class _SparePartTile extends StatelessWidget {
   final SparePart part;
+  final VoidCallback onTap;
 
   const _SparePartTile({
     required this.part,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isLow = part.isBelowMinimum;
-
-    return Card(
+    final isLowStock = part.isBelowMinimum;return Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
+        onTap: onTap,
         leading: CircleAvatar(
           child: Icon(
-            isLow
+            isLowStock
                 ? Icons.warning_amber_rounded
-                : Icons.settings_outlined,
-            color: isLow ? Colors.red : null,
+                : Icons.inventory_2_outlined,
           ),
         ),
         title: Text(
@@ -187,18 +162,25 @@ class _SparePartTile extends StatelessWidget {
         ),
         subtitle: Text(
           'واحد: ${part.unit}\n'
-          'موجودی: ${part.quantity} | '
-          'حداقل: ${part.minimumStock}',
+          'موجودی: ${part.quantity} | حداقل: ${part.minimumStock}',
         ),
         isThreeLine: true,
-        trailing: Text(
-          isLow ? 'نیاز به تأمین' : 'مناسب',
-          style: TextStyle(
-            color: isLow ? Colors.red : Colors.green,
-            fontWeight: FontWeight.bold,
-          ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              isLowStock ? 'نیاز به تأمین' : 'موجود',
+              style: TextStyle(
+                color: isLowStock ? Colors.red : Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Icon(Icons.chevron_left),
+          ],
         ),
       ),
     );
   }
 }
+
