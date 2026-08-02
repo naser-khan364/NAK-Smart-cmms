@@ -26,45 +26,122 @@ class EquipmentPartsPage extends StatelessWidget {
           ? const Center(
               child: Text('برای این تجهیز قطعه‌ای ثبت نشده است.'),
             )
-          : ListView.builder(
+          : ListView(
               padding: const EdgeInsets.all(16),
-              itemCount: parts.length,
-              itemBuilder: (context, index) {
-                final item = parts[index];
-
-                final sparePart = sparePartMockData.firstWhere(
-                  (part) => part.id == item.sparePartId,
-                );
-
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      child: Icon(
-                        sparePart.isBelowMinimum
-                            ? Icons.warning_amber_rounded
-                            : Icons.inventory_2_outlined,
-                      ),
-                    ),
-                    title: Text(sparePart.name),
-                    subtitle: Text(
-                      '${sparePart.code} | '
-                      'مقدار موردنیاز: ${item.requiredQuantity} ${sparePart.unit}',
-                    ),
-                    trailing: const Icon(Icons.chevron_left),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => SparePartDetailsPage(
-                            part: sparePart,
+              children: [
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.inventory_2_outlined,
+                          size: 32,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'BOM و وضعیت قطعات یدکی',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge,
                           ),
                         ),
-                      );
-                    },
+                        Text(
+                          '${parts.length} قطعه',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium,
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              },
+                ),
+                const SizedBox(height: 12),
+                ...parts.map(
+                  (item) => _EquipmentPartCard(
+                    item: item,
+                  ),
+                ),
+              ],
             ),
     );
   }
 }
+
+class _EquipmentPartCard extends StatelessWidget {
+  final EquipmentPart item;
+
+  const _EquipmentPartCard({
+    required this.item,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final sparePart = sparePartMockData.firstWhere(
+      (part) => part.id == item.sparePartId,
+    );
+
+    final belowMinimum = sparePart.isBelowMinimum;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: ListTile(
+        leading: CircleAvatar(
+          child: Icon(
+            belowMinimum
+                ? Icons.warning_amber_rounded
+                : Icons.inventory_2_outlined,
+          ),
+        ),
+        title: Text(sparePart.name),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('کد: ${sparePart.code}'),
+              const SizedBox(height: 3),
+              Text(
+                'مقدار موردنیاز: '
+                '${item.requiredQuantity} ${sparePart.unit}',
+              ),
+              const SizedBox(height: 3),
+              Text(
+                'موجودی: '
+                '${sparePart.quantity} ${sparePart.unit}',
+              ),
+              const SizedBox(height: 3),
+              Text(
+                'حداقل موجودی: '
+                '${sparePart.minimumStock} ${sparePart.unit}',
+              ),
+              const SizedBox(height: 6),
+              Text(
+                belowMinimum
+                    ? 'هشدار: موجودی کمتر از حداقل است'
+                    : 'وضعیت موجودی: مناسب',
+                style: TextStyle(color: belowMinimum ? Colors.red : Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        isThreeLine: true,
+        trailing: const Icon(Icons.chevron_left),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => SparePartDetailsPage(
+                part: sparePart,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+
