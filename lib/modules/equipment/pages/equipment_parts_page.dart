@@ -83,6 +83,9 @@ class _EquipmentPartCard extends StatelessWidget {
     );
 
     final belowMinimum = sparePart.isBelowMinimum;
+    final shortage = item.requiredQuantity > sparePart.quantity
+        ? item.requiredQuantity - sparePart.quantity
+        : 0;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
@@ -121,7 +124,7 @@ class _EquipmentPartCard extends StatelessWidget {
                 belowMinimum
                     ? 'هشدار: موجودی کمتر از حداقل است'
                     : 'وضعیت موجودی: مناسب',
-                style: TextStyle(color: belowMinimum ? Colors.red : Colors.green,
+                style: TextStyle(color: shortage > 0 || belowMinimum ? Colors.red : Colors.green,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -143,5 +146,8 @@ class _EquipmentPartCard extends StatelessWidget {
     );
   }
 }
+
+
+
 
 
