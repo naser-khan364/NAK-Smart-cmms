@@ -16,7 +16,14 @@ class SparePartsPage extends StatelessWidget {
       (sum, part) => sum + part.quantity,
     );
 
-    final belowMinimum = parts.where((part) => part.isBelowMinimum).length;
+    final belowMinimum = parts.where(
+      (part) => part.isBelowMinimum,
+    ).length;
+
+    final criticalParts = parts.where(
+      (part) =>
+          part.criticality == SparePartCriticality.critical,
+    ).length;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -33,7 +40,6 @@ class SparePartsPage extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 20),
-
           Wrap(
             spacing: 16,
             runSpacing: 16,
@@ -53,11 +59,14 @@ class SparePartsPage extends StatelessWidget {
                 value: '$belowMinimum',
                 icon: Icons.warning_amber_rounded,
               ),
+              _SummaryCard(
+                title: 'قطعات بحرانی',
+                value: '$criticalParts',
+                icon: Icons.priority_high_rounded,
+              ),
             ],
           ),
-
           const SizedBox(height: 24),
-
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -69,7 +78,6 @@ class SparePartsPage extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 12),
-
                   ...parts.map(
                     (part) => _SparePartTile(
                       part: part,
@@ -123,7 +131,9 @@ class _SummaryCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     value,
-                    style: Theme.of(context).textTheme.headlineMedium,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium,
                   ),
                 ],
               ),
@@ -133,9 +143,7 @@ class _SummaryCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _SparePartTile extends StatelessWidget {
+}class _SparePartTile extends StatelessWidget {
   final SparePart part;
   final VoidCallback onTap;
 
@@ -146,7 +154,11 @@ class _SparePartTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLowStock = part.isBelowMinimum;return Card(
+    final isLowStock = part.isBelowMinimum;
+    final isCritical =
+        part.criticality == SparePartCriticality.critical;
+
+    return Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
         onTap: onTap,
@@ -162,7 +174,9 @@ class _SparePartTile extends StatelessWidget {
         ),
         subtitle: Text(
           'واحد: ${part.unit}\n'
-          'موجودی: ${part.quantity} | حداقل: ${part.minimumStock}',
+          'موجودی: ${part.quantity} | '
+          'حداقل: ${part.minimumStock}\n'
+          'اهمیت: ${_criticalityLabel(part.criticality)}',
         ),
         isThreeLine: true,
         trailing: Column(
@@ -175,6 +189,16 @@ class _SparePartTile extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            if (isCritical) ...[
+              const SizedBox(height: 4),
+              const Text(
+                'بحرانی',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
             const SizedBox(height: 4),
             const Icon(Icons.chevron_left),
           ],
@@ -182,5 +206,17 @@ class _SparePartTile extends StatelessWidget {
       ),
     );
   }
-}
 
+  String _criticalityLabel(SparePartCriticality criticality) {
+    switch (criticality) {
+      case SparePartCriticality.low:
+        return 'کم';
+      case SparePartCriticality.medium:
+        return 'متوسط';
+      case SparePartCriticality.high:
+        return 'زیاد';
+      case SparePartCriticality.critical:
+        return 'بحرانی';
+    }
+  }
+}
