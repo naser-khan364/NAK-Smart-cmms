@@ -35,10 +35,18 @@ class SparePartDetailsPage extends StatelessWidget {
                   Text('واحد: ${part.unit}'),
                   Text('موجودی: ${part.quantity}'),
                   Text('حداقل موجودی: ${part.minimumStock}'),
+                  Text('اهمیت قطعه: '),
+                  const SizedBox(height: 6),
                   Text(
                     part.isBelowMinimum
                         ? 'وضعیت موجودی: زیر حداقل'
                         : 'وضعیت موجودی: مناسب',
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    part.isBelowMinimum
+                        ? 'کسری موجودی:  '
+                        : 'وضعیت تأمین: موجودی کافی',
                   ),
                 ],
               ),
@@ -83,3 +91,4 @@ class SparePartsDetailsListPage extends StatelessWidget {
     );
   }
 }
+
