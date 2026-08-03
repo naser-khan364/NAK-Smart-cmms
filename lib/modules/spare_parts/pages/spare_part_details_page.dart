@@ -35,6 +35,10 @@ class SparePartDetailsPage extends StatelessWidget {
                   Text('واحد: ${part.unit}'),
                   Text('موجودی: ${part.quantity}'),
                   Text('حداقل موجودی: ${part.minimumStock}'),
+                  Text('قیمت واحد: ${part.unitPrice}'),
+                  Text('تأمین‌کننده: ${part.supplier}'),
+                  Text('کد قطعه نزد تأمین‌کننده: ${part.supplierPartCode}'),
+                  Text('زمان تأمین: ${part.leadTimeDays} روز'),
                   Text('اهمیت قطعه: '),
                   const SizedBox(height: 6),
                   Text(
@@ -91,4 +95,3 @@ class SparePartsDetailsListPage extends StatelessWidget {
     );
   }
 }
-

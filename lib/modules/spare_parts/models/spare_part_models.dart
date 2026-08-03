@@ -14,6 +14,11 @@ class SparePart {
   final SparePartCriticality criticality;
   final double minimumStock;
 
+  final double unitPrice;
+  final String supplier;
+  final String supplierPartCode;
+  final int leadTimeDays;
+
   const SparePart({
     required this.id,
     required this.code,
@@ -22,6 +27,10 @@ class SparePart {
     required this.quantity,
     required this.criticality,
     required this.minimumStock,
+    required this.unitPrice,
+    required this.supplier,
+    required this.supplierPartCode,
+    required this.leadTimeDays,
   });
 
   bool get isBelowMinimum => quantity < minimumStock;

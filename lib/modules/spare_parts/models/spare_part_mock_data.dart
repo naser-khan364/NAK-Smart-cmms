@@ -9,6 +9,10 @@ final List<SparePart> sparePartMockData = [
     quantity: 18,
     criticality: SparePartCriticality.high,
     minimumStock: 10,
+    unitPrice: 0,
+    supplier: 'ثبت نشده',
+    supplierPartCode: 'ثبت نشده',
+    leadTimeDays: 0,
   ),
   SparePart(
     id: 'SP-002',
@@ -18,6 +22,10 @@ final List<SparePart> sparePartMockData = [
     quantity: 4,
     criticality: SparePartCriticality.critical,
     minimumStock: 8,
+    unitPrice: 0,
+    supplier: 'ثبت نشده',
+    supplierPartCode: 'ثبت نشده',
+    leadTimeDays: 0,
   ),
   SparePart(
     id: 'SP-003',
@@ -27,6 +35,10 @@ final List<SparePart> sparePartMockData = [
     quantity: 12,
     criticality: SparePartCriticality.medium,
     minimumStock: 6,
+    unitPrice: 0,
+    supplier: 'ثبت نشده',
+    supplierPartCode: 'ثبت نشده',
+    leadTimeDays: 0,
   ),
   SparePart(
     id: 'SP-004',
@@ -36,6 +48,10 @@ final List<SparePart> sparePartMockData = [
     quantity: 35,
     criticality: SparePartCriticality.medium,
     minimumStock: 15,
+    unitPrice: 0,
+    supplier: 'ثبت نشده',
+    supplierPartCode: 'ثبت نشده',
+    leadTimeDays: 0,
   ),
   SparePart(
     id: 'SP-005',
@@ -45,6 +61,10 @@ final List<SparePart> sparePartMockData = [
     quantity: 1,
     criticality: SparePartCriticality.critical,
     minimumStock: 2,
+    unitPrice: 0,
+    supplier: 'ثبت نشده',
+    supplierPartCode: 'ثبت نشده',
+    leadTimeDays: 0,
   ),
   SparePart(
     id: 'SP-006',
@@ -54,6 +74,10 @@ final List<SparePart> sparePartMockData = [
     quantity: 7,
     criticality: SparePartCriticality.high,
     minimumStock: 5,
+    unitPrice: 0,
+    supplier: 'ثبت نشده',
+    supplierPartCode: 'ثبت نشده',
+    leadTimeDays: 0,
   ),
   SparePart(
     id: 'SP-007',
@@ -63,6 +87,10 @@ final List<SparePart> sparePartMockData = [
     quantity: 120,
     criticality: SparePartCriticality.low,
     minimumStock: 50,
+    unitPrice: 0,
+    supplier: 'ثبت نشده',
+    supplierPartCode: 'ثبت نشده',
+    leadTimeDays: 0,
   ),
   SparePart(
     id: 'SP-008',
@@ -72,5 +100,10 @@ final List<SparePart> sparePartMockData = [
     quantity: 2,
     criticality: SparePartCriticality.high,
     minimumStock: 3,
+    unitPrice: 0,
+    supplier: 'ثبت نشده',
+    supplierPartCode: 'ثبت نشده',
+    leadTimeDays: 0,
   ),
 ];
+
